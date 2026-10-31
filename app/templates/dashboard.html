@@ -41,8 +41,27 @@
 
 <!-- All Reports Table -->
 <div class="card shadow-sm">
-    <div class="card-header bg-dark text-white">
+    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
         <h5 class="mb-0">All Reports</h5>
+        
+        <!-- LIVE FILTER DROPDOWNS -->
+        <div class="d-flex gap-2">
+            <select id="filterCategory" class="form-select form-select-sm" style="width: auto;">
+                <option value="">All Categories</option>
+                <option value="Pothole">Pothole</option>
+                <option value="Water leak">Water leak</option>
+                <option value="Streetlight">Streetlight</option>
+                <option value="Illegal dumping">Illegal dumping</option>
+                <option value="Other">Other</option>
+            </select>
+            
+            <select id="filterStatus" class="form-select form-select-sm" style="width: auto;">
+                <option value="">All Statuses</option>
+                <option value="Open">Open</option>
+                <option value="In progress">In progress</option>
+                <option value="Closed">Closed</option>
+            </select>
+        </div>
     </div>
     <div class="card-body p-0">
         <div class="table-responsive">
@@ -59,7 +78,8 @@
                 </thead>
                 <tbody>
                     {% for report in reports %}
-                    <tr>
+                    <!-- ADDED data attributes AND class="report-row" -->
+                    <tr class="report-row" data-category="{{ report.category }}" data-status="{{ report.status }}">
                         <td><strong>{{ report.reference }}</strong></td>
                         <td>{{ report.created_at.strftime('%Y-%m-%d') }}</td>
                         <td>{{ report.category }}</td>

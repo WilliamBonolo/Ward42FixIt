@@ -5,8 +5,8 @@
     <div class="col-md-8">
         <h2 class="mb-4">Report a Fault</h2>
         
-        <form method="POST" action="" enctype="multipart/form-data">
-            <!-- SECURITY TOKEN ADDED HERE -->
+        <!-- ADDED ID="reportForm" -->
+        <form method="POST" action="" enctype="multipart/form-data" id="reportForm">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             
             <div class="mb-3">
@@ -29,6 +29,8 @@
             <div class="mb-3">
                 <label for="description" class="form-label">Description (10 - 500 characters)</label>
                 <textarea class="form-control" id="description" name="description" rows="3" required minlength="10" maxlength="500"></textarea>
+                <!-- ADDED ERROR MESSAGE CONTAINER -->
+                <div id="descError" class="text-danger mt-1" style="display: none;"></div>
             </div>
 
             <div class="row">
@@ -39,6 +41,8 @@
                 <div class="col-md-6 mb-3">
                     <label for="reporter_cell" class="form-label">Cell Number (e.g., 0821234567)</label>
                     <input type="tel" class="form-control" id="reporter_cell" name="reporter_cell" required pattern="0[0-9]{9}">
+                    <!-- ADDED ERROR MESSAGE CONTAINER -->
+                    <div id="cellError" class="text-danger mt-1" style="display: none;"></div>
                 </div>
             </div>
 
