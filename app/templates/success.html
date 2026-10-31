@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 text-center mt-5">
+        <h2 class="text-success mb-4">Report Submitted Successfully!</h2>
+        <p class="lead">Thank you for helping improve Ward 42.</p>
+        
+        <div class="card bg-light mt-4 mb-4">
+            <div class="card-body">
+                <h4 class="card-title">Your Reference Number:</h4>
+                <h1 class="display-5 text-primary fw-bold">{{ reference }}</h1>
+            </div>
+        </div>
+        
+        <p>Please write down this reference number. You can use it to check the status of your report.</p>
+        <a href="{{ url_for('main.home') }}" class="btn btn-primary mt-3">Return to Home</a>
+    </div>
+</div>
+{% endblock %}
