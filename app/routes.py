@@ -1,12 +1,11 @@
 import os
-from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
+from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, session
 from werkzeug.utils import secure_filename
 from app import db
-from app.models import Report
+from app.models import Report, User
 
 main = Blueprint('main', __name__)
 
-# Helper function to check if the uploaded file is allowed (Part E requirement)
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in current_app.config['ALLOWED_EXTENSIONS']
@@ -18,38 +17,30 @@ def home():
 @main.route('/report', methods=['GET', 'POST'])
 def report():
     if request.method == 'POST':
-        # 1. Get the form data
         category = request.form.get('category')
         street = request.form.get('street')
         description = request.form.get('description')
         reporter_name = request.form.get('reporter_name')
         reporter_cell = request.form.get('reporter_cell')
         
-        # 2. Generate reference number
         reference = Report.generate_reference()
         
-        # 3. Handle the photo upload (Part E)
         photo_path = None
         if 'photo' in request.files:
             file = request.files['photo']
             if file.filename != '':
                 if allowed_file(file.filename):
-                    # Secure the filename and rename it to the reference number (e.g., W42-0001.jpg)
                     filename = secure_filename(file.filename)
                     extension = filename.rsplit('.', 1)[1].lower()
                     new_filename = f"{reference}.{extension}"
                     
-                    # Save the file to the uploads folder
                     upload_folder = current_app.config['UPLOAD_FOLDER']
                     file.save(os.path.join(upload_folder, new_filename))
-                    
-                    # Save just the path to the database, not the image itself
                     photo_path = new_filename
                 else:
                     flash('Invalid file type. Only JPG, PNG, and WEBP are allowed.', 'danger')
                     return redirect(url_for('main.report'))
 
-        # 4. Save to the database
         new_report = Report(
             reference=reference,
             category=category,
@@ -64,7 +55,6 @@ def report():
         try:
             db.session.add(new_report)
             db.session.commit()
-            # Redirect to the success page, passing the reference number
             return render_template('success.html', reference=reference)
         except Exception as e:
             db.session.rollback()
@@ -72,3 +62,40 @@ def report():
             print(e)
 
     return render_template('report.html')
+
+@main.route('/check_status', methods=['GET', 'POST'])
+def check_status():
+    report = None
+    error = None
+    
+    if request.method == 'POST':
+        reference_input = request.form.get('reference').strip().upper()
+        report = Report.query.filter_by(reference=reference_input).first()
+        
+        if not report:
+            error = f"No report found with reference number '{reference_input}'. Please check and try again."
+            
+    return render_template('check_status.html', report=report, error=error)
+
+@main.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        
+        user = User.query.filter_by(username=username).first()
+        
+        if user and user.check_password(password):
+            session['user_id'] = user.id
+            flash('Logged in successfully.', 'success')
+            return redirect(url_for('main.home')) # Temporarily redirect to home
+        else:
+            flash('Invalid username or password.', 'danger')
+            
+    return render_template('login.html')
+
+@main.route('/logout')
+def logout():
+    session.pop('user_id', None)
+    flash('You have been logged out.', 'info')
+    return redirect(url_for('main.home'))

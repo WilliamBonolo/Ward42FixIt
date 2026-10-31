@@ -6,7 +6,8 @@
         <h2 class="mb-4">Report a Fault</h2>
         
         <form method="POST" action="" enctype="multipart/form-data">
-            <!-- We will add CSRF token here later -->
+            <!-- SECURITY TOKEN ADDED HERE -->
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             
             <div class="mb-3">
                 <label for="category" class="form-label">Category</label>
