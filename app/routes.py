@@ -88,7 +88,7 @@ def login():
         if user and user.check_password(password):
             session['user_id'] = user.id
             flash('Logged in successfully.', 'success')
-            return redirect(url_for('main.home')) # Temporarily redirect to home
+            return redirect(url_for('main.dashboard')) # Now redirects to the dashboard
         else:
             flash('Invalid username or password.', 'danger')
             
@@ -99,3 +99,37 @@ def logout():
     session.pop('user_id', None)
     flash('You have been logged out.', 'info')
     return redirect(url_for('main.home'))
+
+@main.route('/dashboard')
+def dashboard():
+    if 'user_id' not in session:
+        flash('Please log in to access the dashboard.', 'warning')
+        return redirect(url_for('main.login'))
+    
+    # Get all reports (newest first)
+    reports = Report.query.order_by(Report.created_at.desc()).all()
+    
+    # Analytics: Count by Category
+    category_counts = db.session.query(Report.category, db.func.count(Report.id)).group_by(Report.category).all()
+    
+    # Analytics: Count by Status
+    status_counts = db.session.query(Report.status, db.func.count(Report.id)).group_by(Report.status).all()
+    
+    return render_template('dashboard.html', reports=reports, category_counts=category_counts, status_counts=status_counts)
+
+@main.route('/update_status/<int:report_id>', methods=['POST'])
+def update_status(report_id):
+    if 'user_id' not in session:
+        return redirect(url_for('main.login'))
+    
+    new_status = request.form.get('status')
+    report = Report.query.get_or_404(report_id)
+    
+    if new_status in ['Open', 'In progress', 'Closed']:
+        report.status = new_status
+        db.session.commit()
+        flash(f'Status for {report.reference} updated to {new_status}.', 'success')
+    else:
+        flash('Invalid status.', 'danger')
+        
+    return redirect(url_for('main.dashboard'))
