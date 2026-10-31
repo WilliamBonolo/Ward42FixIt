@@ -88,7 +88,7 @@ def login():
         if user and user.check_password(password):
             session['user_id'] = user.id
             flash('Logged in successfully.', 'success')
-            return redirect(url_for('main.dashboard')) # Now redirects to the dashboard
+            return redirect(url_for('main.dashboard'))
         else:
             flash('Invalid username or password.', 'danger')
             
@@ -106,13 +106,8 @@ def dashboard():
         flash('Please log in to access the dashboard.', 'warning')
         return redirect(url_for('main.login'))
     
-    # Get all reports (newest first)
     reports = Report.query.order_by(Report.created_at.desc()).all()
-    
-    # Analytics: Count by Category
     category_counts = db.session.query(Report.category, db.func.count(Report.id)).group_by(Report.category).all()
-    
-    # Analytics: Count by Status
     status_counts = db.session.query(Report.status, db.func.count(Report.id)).group_by(Report.status).all()
     
     return render_template('dashboard.html', reports=reports, category_counts=category_counts, status_counts=status_counts)
@@ -133,3 +128,7 @@ def update_status(report_id):
         flash('Invalid status.', 'danger')
         
     return redirect(url_for('main.dashboard'))
+
+@main.route('/offline')
+def offline():
+    return render_template('offline.html')

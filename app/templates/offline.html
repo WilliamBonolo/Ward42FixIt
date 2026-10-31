@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="text-center mt-5">
+    <h1 class="display-4 text-danger">You are offline</h1>
+    <p class="lead">It looks like you have lost your internet connection.</p>
+    <p>Any text you were typing in the "Report a Fault" form has been saved automatically and will be here when you reconnect.</p>
+</div>
+{% endblock %}
+
+@main.route('/offline')
+def offline():
+    return render_template('offline.html')
