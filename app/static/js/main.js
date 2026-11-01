@@ -72,13 +72,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     // 3. SAVED DRAFT (localStorage)
     // ==========================================
-    // Only apply on the report page
     if (reportForm) {
         const streetInput = document.getElementById('street');
         const categoryInput = document.getElementById('category');
         const descInput = document.getElementById('description');
 
-        // Load draft on page load
         try {
             const savedDraft = JSON.parse(localStorage.getItem('reportDraft'));
             if (savedDraft) {
@@ -90,7 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error("Error loading draft:", error);
         }
 
-        // Save draft as user types (excluding PII like name and cell)
         const saveDraft = () => {
             try {
                 const draft = {
@@ -108,9 +105,47 @@ document.addEventListener('DOMContentLoaded', () => {
         categoryInput.addEventListener('change', saveDraft);
         descInput.addEventListener('input', saveDraft);
 
-        // Clear draft on successful submit
         reportForm.addEventListener('submit', () => {
             localStorage.removeItem('reportDraft');
         });
+    }
+
+    // ==========================================
+    // 4. FETCH API FOR DASHBOARD (Part E2)
+    // ==========================================
+    const apiStatsDiv = document.getElementById('api-stats');
+    const apiSpinner = document.getElementById('api-spinner');
+
+    if (apiStatsDiv && apiSpinner) {
+        // We use an async function with try/catch to handle errors
+        const fetchApiSummary = async () => {
+            try {
+                const response = await fetch('/api/reports/summary');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                // Hide spinner and display data
+                apiSpinner.style.display = 'none';
+                apiStatsDiv.innerHTML = `
+                    <strong>Live API Data:</strong> 
+                    Total Reports: ${data.total_reports} | 
+                    Open: ${data.statuses['Open'] || 0} | 
+                    In Progress: ${data.statuses['In progress'] || 0} | 
+                    Closed: ${data.statuses['Closed'] || 0}
+                `;
+                
+            } catch (error) {
+                console.error("Failed to fetch API data:", error);
+                apiSpinner.style.display = 'none';
+                apiStatsDiv.innerHTML = `<span class="text-danger">Failed to load live stats.</span>`;
+            }
+        };
+
+        // Run the fetch function
+        fetchApiSummary();
     }
 });

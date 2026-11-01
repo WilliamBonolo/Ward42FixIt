@@ -1,17 +1,49 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row align-items-center">
-    <div class="col-md-8">
-        <h1 class="display-4">Welcome to Ward 42 Fix-It</h1>
-        <p class="lead">Report potholes, burst water pipes, broken streetlights, and illegal dumping directly to your ward coordinator.</p>
-        <a href="{{ url_for('main.report') }}" class="btn btn-primary btn-lg mt-3">Report a Fault Now</a>
-        <a href="#" class="btn btn-outline-secondary btn-lg mt-3">Check Report Status</a>
+<div class="row align-items-center py-5">
+    <!-- Left Side: Text and Buttons -->
+    <div class="col-lg-7 mb-5 mb-lg-0">
+        <h1 class="display-3 fw-bold mb-4" style="line-height: 1.1; letter-spacing: -1px;">
+            Report Community Issues.<br>
+            <span style="background: linear-gradient(90deg, var(--sky-blue), var(--hot-orange)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                Fix Your Neighbourhood.
+            </span>
+        </h1>
+        
+        <p class="lead mb-5 text-muted" style="font-size: 1.2rem;">
+            The official portal for Ward 42. Log potholes, water leaks, or illegal dumping instantly. Track progress and hold the council accountable. No more lost WhatsApp messages.
+        </p>
+        
+        <div class="d-flex flex-wrap gap-3">
+            <a href="{{ url_for('main.report') }}" class="btn btn-orange btn-lg px-5 py-3">
+                <i class="fa-solid fa-plus me-2"></i>Report a Fault
+            </a>
+            <a href="{{ url_for('main.check_status') }}" class="btn btn-sky btn-lg px-5 py-3">
+                Track a Report
+            </a>
+        </div>
     </div>
-    <div class="col-md-4 text-center">
-        <!-- Placeholder for the tutorial video later -->
-        <div class="bg-light border rounded p-5 mt-4 mt-md-0">
-            <p class="text-muted">Tutorial Video Placeholder</p>
+    
+    <!-- Right Side: Video Player -->
+    <div class="col-lg-5">
+        <div class="card p-2 shadow-lg" style="border-radius: 20px;">
+            <!-- Fake Browser Header -->
+            <div class="d-flex align-items-center px-3 py-2 border-bottom" style="border-color: var(--border-color) !important;">
+                <div class="d-flex gap-2">
+                    <div style="width: 12px; height: 12px; border-radius: 50%; background-color: #ef4444;"></div>
+                    <div style="width: 12px; height: 12px; border-radius: 50%; background-color: #eab308;"></div>
+                    <div style="width: 12px; height: 12px; border-radius: 50%; background-color: #22c55e;"></div>
+                </div>
+                <div class="ms-4 text-muted fw-bold" style="font-size: 0.8rem; letter-spacing: 1px;">HOW TO USE FIX-IT.MP4</div>
+            </div>
+            
+            <!-- Video -->
+            <video controls width="100%" style="border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; display: block;">
+                <source src="{{ url_for('static', filename='videos/tutorial.mp4') }}" type="video/mp4">
+                Your browser does not support the video tag.
+                <track label="English" kind="captions" srclang="en" src="{{ url_for('static', filename='videos/captions.vtt') }}" default>
+            </video>
         </div>
     </div>
 </div>

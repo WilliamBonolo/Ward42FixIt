@@ -1,0 +1,199 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+
+:root {
+    --sky-blue: #0ea5e9;
+    --sky-blue-glow: rgba(14, 165, 233, 0.5);
+    --hot-orange: #ff6b00;
+    --hot-orange-glow: rgba(255, 107, 0, 0.5);
+    --white: #ffffff;
+    --dark-bg: #030712; 
+    --card-bg: #0f172a; 
+    --text-main: #f3f4f6;
+    --text-muted: #cbd5e1; /* Made lighter for readability */
+    --border-color: #1e293b;
+}
+
+body {
+    background-color: var(--dark-bg);
+    background-image: radial-gradient(circle at 50% 0%, rgba(14, 165, 233, 0.15) 0%, transparent 50%);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: var(--text-main);
+    min-height: 100vh;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5 {
+    font-weight: 800;
+    color: var(--white);
+    letter-spacing: -0.5px;
+}
+
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
+/* Form Labels & Text (Readability Fix) */
+label, .form-label {
+    color: var(--white) !important;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.form-text {
+    color: var(--text-muted) !important;
+    font-size: 0.85rem;
+}
+
+/* Glassmorphism Navbar */
+.navbar {
+    background: rgba(3, 7, 18, 0.8) !important;
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.navbar-brand {
+    font-weight: 800;
+    font-size: 1.4rem;
+    color: var(--white) !important;
+}
+
+.nav-link {
+    color: var(--text-muted) !important;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: color 0.2s ease;
+}
+
+.nav-link:hover, .nav-link.text-warning {
+    color: var(--white) !important;
+}
+
+/* Buttons */
+.btn-sky, .btn-orange {
+    font-weight: 700;
+    border: none;
+    border-radius: 50px;
+    padding: 12px 32px;
+    transition: all 0.3s ease;
+}
+
+.btn-sky {
+    background-color: var(--sky-blue);
+    color: var(--white);
+    box-shadow: 0 0 20px var(--sky-blue-glow);
+}
+
+.btn-sky:hover {
+    background-color: #38bdf8;
+    box-shadow: 0 0 30px var(--sky-blue-glow);
+    transform: translateY(-2px);
+    color: var(--white);
+}
+
+.btn-orange {
+    background-color: var(--hot-orange);
+    color: var(--white);
+    box-shadow: 0 0 20px var(--hot-orange-glow);
+}
+
+.btn-orange:hover {
+    background-color: #ff8533;
+    box-shadow: 0 0 30px var(--hot-orange-glow);
+    transform: translateY(-2px);
+    color: var(--white);
+}
+
+/* Glass Cards */
+.card {
+    background-color: rgba(15, 23, 42, 0.7);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+
+.card-header-custom {
+    background-color: rgba(30, 41, 59, 0.5);
+    color: var(--white);
+    border-bottom: 1px solid var(--border-color);
+    border-radius: 16px 16px 0 0 !important;
+    padding: 1.2rem;
+}
+
+/* Inputs and Forms */
+.form-control, .form-select {
+    background-color: var(--dark-bg);
+    border: 1px solid var(--border-color);
+    color: var(--white) !important;
+    border-radius: 10px;
+    padding: 12px 15px;
+}
+
+.form-control:focus, .form-select:focus {
+    background-color: var(--dark-bg);
+    color: var(--white);
+    border-color: var(--sky-blue);
+    box-shadow: 0 0 0 0.25rem rgba(14, 165, 233, 0.25);
+}
+
+/* Placeholders */
+.form-control::placeholder {
+    color: #64748b !important; /* Visible grey */
+    opacity: 1;
+}
+
+/* File Upload Button Styling */
+.form-control[type="file"]::file-selector-button {
+    background-color: var(--sky-blue);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    margin-right: 15px;
+    font-weight: 600;
+    transition: background-color 0.2s;
+    cursor: pointer;
+}
+
+.form-control[type="file"]::file-selector-button:hover {
+    background-color: var(--sky-blue-dark);
+}
+
+/* Tables */
+.table {
+    color: var(--text-main);
+    border-color: var(--border-color);
+}
+
+.table thead th {
+    background-color: rgba(30, 41, 59, 0.5);
+    color: var(--text-muted);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    border-bottom: 2px solid var(--border-color);
+    padding: 15px;
+}
+
+.table tbody tr {
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(14, 165, 233, 0.05);
+}
+
+/* Badges */
+.badge-open { background-color: rgba(255, 107, 0, 0.2); color: #ff8533; border: 1px solid #ff6b00; padding: 6px 12px; }
+.badge-progress { background-color: rgba(14, 165, 233, 0.2); color: #38bdf8; border: 1px solid #0ea5e9; padding: 6px 12px; }
+.badge-closed { background-color: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #10b981; padding: 6px 12px; }
+
+/* Footer */
+footer {
+    background-color: var(--dark-bg) !important;
+    border-top: 1px solid var(--border-color);
+    color: var(--text-muted);
+}

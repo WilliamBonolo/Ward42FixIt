@@ -2,20 +2,24 @@
 
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Coordinator Dashboard</h2>
+    <h2 class="fw-bold" style="color: var(--sky-blue-dark);"><i class="fa-solid fa-gauge-high me-2"></i>Coordinator Dashboard</h2>
 </div>
 
-<!-- Analytics Section -->
+<div class="alert alert-info d-flex align-items-center shadow-sm border-0" role="alert" id="api-status-box" style="background-color: #e0f2fe; color: #0284c7;">
+    <div class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" id="api-spinner"></div>
+    <div id="api-stats" class="fw-bold">Loading live system status from API...</div>
+</div>
+
 <div class="row mb-4">
     <div class="col-md-6 mb-3">
-        <div class="card bg-light">
+        <div class="card shadow-sm h-100">
             <div class="card-body">
-                <h5 class="card-title">Reports by Category</h5>
+                <h5 class="card-title fw-bold text-muted text-uppercase mb-3"><i class="fa-solid fa-tags me-2"></i>By Category</h5>
                 <ul class="list-group list-group-flush">
                     {% for category, count in category_counts %}
-                        <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent">
+                        <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent fw-bold">
                             {{ category }}
-                            <span class="badge bg-primary rounded-pill">{{ count }}</span>
+                            <span class="badge rounded-pill fs-6" style="background-color: var(--sky-blue);">{{ count }}</span>
                         </li>
                     {% endfor %}
                 </ul>
@@ -23,14 +27,14 @@
         </div>
     </div>
     <div class="col-md-6 mb-3">
-        <div class="card bg-light">
+        <div class="card shadow-sm h-100">
             <div class="card-body">
-                <h5 class="card-title">Reports by Status</h5>
+                <h5 class="card-title fw-bold text-muted text-uppercase mb-3"><i class="fa-solid fa-list-check me-2"></i>By Status</h5>
                 <ul class="list-group list-group-flush">
                     {% for status, count in status_counts %}
-                        <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent">
+                        <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent fw-bold">
                             {{ status }}
-                            <span class="badge bg-secondary rounded-pill">{{ count }}</span>
+                            <span class="badge rounded-pill fs-6" style="background-color: var(--hot-orange);">{{ count }}</span>
                         </li>
                     {% endfor %}
                 </ul>
@@ -39,14 +43,12 @@
     </div>
 </div>
 
-<!-- All Reports Table -->
-<div class="card shadow-sm">
-    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-        <h5 class="mb-0">All Reports</h5>
+<div class="card shadow border-0 mb-4">
+    <div class="card-header-custom d-flex justify-content-between align-items-center py-3">
+        <h5 class="mb-0"><i class="fa-solid fa-table-list me-2"></i>All Reports</h5>
         
-        <!-- LIVE FILTER DROPDOWNS -->
         <div class="d-flex gap-2">
-            <select id="filterCategory" class="form-select form-select-sm" style="width: auto;">
+            <select id="filterCategory" class="form-select form-select-sm fw-bold" style="width: auto; border: 2px solid var(--white);">
                 <option value="">All Categories</option>
                 <option value="Pothole">Pothole</option>
                 <option value="Water leak">Water leak</option>
@@ -55,7 +57,7 @@
                 <option value="Other">Other</option>
             </select>
             
-            <select id="filterStatus" class="form-select form-select-sm" style="width: auto;">
+            <select id="filterStatus" class="form-select form-select-sm fw-bold" style="width: auto; border: 2px solid var(--white);">
                 <option value="">All Statuses</option>
                 <option value="Open">Open</option>
                 <option value="In progress">In progress</option>
@@ -65,11 +67,12 @@
     </div>
     <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-hover table-striped mb-0">
-                <thead class="table-light">
+            <table class="table table-hover mb-0 align-middle">
+                <thead>
                     <tr>
                         <th>Ref</th>
                         <th>Date</th>
+                        <th>Photo</th>
                         <th>Category</th>
                         <th>Street</th>
                         <th>Status</th>
@@ -78,36 +81,44 @@
                 </thead>
                 <tbody>
                     {% for report in reports %}
-                    <!-- ADDED data attributes AND class="report-row" -->
                     <tr class="report-row" data-category="{{ report.category }}" data-status="{{ report.status }}">
                         <td><strong>{{ report.reference }}</strong></td>
                         <td>{{ report.created_at.strftime('%Y-%m-%d') }}</td>
-                        <td>{{ report.category }}</td>
+                        <td>
+                            {% if report.photo_path %}
+                                <img src="{{ url_for('static', filename='uploads/' + report.photo_path) }}" 
+                                     alt="Photo for report {{ report.reference }}" 
+                                     class="img-thumbnail" style="width: 60px; height: 60px; object-fit: cover; border-color: var(--sky-blue);">
+                            {% else %}
+                                <span class="text-muted fst-italic">No photo</span>
+                            {% endif %}
+                        </td>
+                        <td class="fw-bold">{{ report.category }}</td>
                         <td>{{ report.street }}</td>
                         <td>
                             {% if report.status == 'Open' %}
-                                <span class="badge bg-danger">Open</span>
+                                <span class="badge badge-open px-2 py-1">Open</span>
                             {% elif report.status == 'In progress' %}
-                                <span class="badge bg-warning text-dark">In progress</span>
+                                <span class="badge badge-progress px-2 py-1">In progress</span>
                             {% else %}
-                                <span class="badge bg-success">Closed</span>
+                                <span class="badge badge-closed px-2 py-1">Closed</span>
                             {% endif %}
                         </td>
                         <td>
                             <form method="POST" action="{{ url_for('main.update_status', report_id=report.id) }}" class="d-flex">
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                                <select name="status" class="form-select form-select-sm me-2" style="width: auto;">
+                                <select name="status" class="form-select form-select-sm me-2 fw-bold" style="width: auto;">
                                     <option value="Open" {% if report.status == 'Open' %}selected{% endif %}>Open</option>
                                     <option value="In progress" {% if report.status == 'In progress' %}selected{% endif %}>In progress</option>
                                     <option value="Closed" {% if report.status == 'Closed' %}selected{% endif %}>Closed</option>
                                 </select>
-                                <button type="submit" class="btn btn-sm btn-outline-primary">Update</button>
+                                <button type="submit" class="btn btn-sm btn-sky">Update</button>
                             </form>
                         </td>
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="6" class="text-center py-4">No reports found in the system.</td>
+                        <td colspan="7" class="text-center py-5 text-muted fw-bold">No reports found in the system.</td>
                     </tr>
                     {% endfor %}
                 </tbody>

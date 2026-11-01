@@ -1,5 +1,5 @@
 import os
-from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, session
+from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, session, send_from_directory, jsonify
 from werkzeug.utils import secure_filename
 from app import db
 from app.models import Report, User
@@ -132,3 +132,25 @@ def update_status(report_id):
 @main.route('/offline')
 def offline():
     return render_template('offline.html')
+
+@main.route('/sw.js')
+def sw():
+    return send_from_directory('static/js', 'sw.js', mimetype='application/javascript')
+
+@main.route('/api/reports/summary')
+def api_summary():
+    # Protect the API so only the logged-in coordinator can see it
+    if 'user_id' not in session:
+        return jsonify({"error": "Unauthorized"}), 401
+    
+    category_counts = db.session.query(Report.category, db.func.count(Report.id)).group_by(Report.category).all()
+    status_counts = db.session.query(Report.status, db.func.count(Report.id)).group_by(Report.status).all()
+    
+    categories_dict = {cat: count for cat, count in category_counts}
+    status_dict = {stat: count for stat, count in status_counts}
+    
+    return jsonify({
+        "categories": categories_dict,
+        "statuses": status_dict,
+        "total_reports": Report.query.count()
+    })
